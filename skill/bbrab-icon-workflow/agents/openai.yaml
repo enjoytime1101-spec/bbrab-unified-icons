@@ -1,0 +1,4 @@
+interface:
+  display_name: "BB Rab Unified Icons"
+  short_description: "Audit and safely unify accessible SVG buttons"
+  default_prompt: "Use $bbrab-icon-workflow to audit this interface, classify each button, and propose a safe unified SVG migration before editing."
