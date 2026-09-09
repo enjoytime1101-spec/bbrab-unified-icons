@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive catalog and policy laboratory for the BB Rab Unified SVG icon system.">
+  <title>BB Rab Unified Icons Playground</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#catalog">Skip to icon catalog</a>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="BB Rab Unified Icons home">
+      <span class="brand-mark" aria-hidden="true">B</span>
+      <span>BB Rab <strong>Unified Icons</strong></span>
+    </a>
+    <nav aria-label="Project links">
+      <a href="#policy-lab">Policy Lab</a>
+      <a href="./ICON_STANDARD.md">Standard</a>
+      <a href="https://github.com/enjoytime1101-spec/bbrab-unified-icons">GitHub</a>
+      <button class="icon-control" id="theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch theme" aria-pressed="false">
+        <span id="theme-icon" aria-hidden="true"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">OPEN-SOURCE SVG ENGINEERING SYSTEM</p>
+        <h1 id="page-title">One visual language.<br><span>Conservative by design.</span></h1>
+        <p class="hero-copy">Explore the 24px catalog, test color and optical size, copy production-ready markup, and verify whether a button can safely become icon-only.</p>
+      </div>
+      <div class="hero-metric" aria-label="Catalog summary">
+        <strong id="icon-count">36</strong>
+        <span>icons · zero runtime dependencies</span>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Icon playground">
+      <aside class="control-panel" aria-labelledby="controls-title">
+        <div class="panel-heading">
+          <p class="section-kicker">Controls</p>
+          <h2 id="controls-title">Tune the system</h2>
+        </div>
+
+        <label class="field" for="icon-search">
+          <span>Search icons</span>
+          <span class="search-wrap">
+            <span aria-hidden="true">⌕</span>
+            <input id="icon-search" type="search" placeholder="Try “send” or “share” autocomplete="off">
+            <kbd>/</kbd>
+          </span>
+        </label>
+
+        <label class="field" for="icon-size">
+          <span class="field-row"><span>Icon size</span><output id="size-output" for="icon-size">32px</output></span>
+          <input id="icon-size" type="range" min="16" max="64" value="32" step="1">
+        </label>
+
+        <label class="field" for="icon-color">
+          <span>Icon color</span>
+          <span class="color-control">
+            <input id="icon-color" type="color" value="#2563eb">
+            <code id="color-output">#2563eb</code>
+          </span>
+        </label>
+
+        <label class="field" for="stage-background">
+          <span>Preview surface</span>
+          <select id="stage-background">
+            <option value="paper">Paper</option>
+            <option value="ink">Ink</option>
+            <option value="grid">Grid</option>
+          </select>
+        </label>
+
+        <div class="keyline-note">
+          <span class="keyline-swatch" aria-hidden="true"></span>
+          <p><strong>24 × 24 viewBox</strong><br>20-unit keyline · 2-unit stroke</p>
+        </div>
+      </aside>
+
+      <section class="catalog-panel" id="catalog" aria-labelledby="catalog-title">
+        <div class="catalog-header">
+          <div>
+            <p class="section-kicker">Catalog</p>
+            <h2 id="catalog-title">Choose an icon</h2>
+          </div>
+          <p id="result-count" aria-live="polite">34 results</p>
+        </div>
+        <div class="icon-grid" id="icon-grid"></div>
+        <p class="empty-state" id="empty-state" hidden>No icons match that search.</p>
+      </section>
+
+      <aside class="inspector" aria-labelledby="inspector-title">
+        <div>
+          <p class="section-kicker">Inspector</p>
+          <h2 id="inspector-title">send</h2>
+        </div>
+        <div class="preview-stage paper" id="preview-stage">
+          <span class="safe-zone" aria-hidden="true"></span>
+          <div id="icon-preview" aria-label="Selected icon preview"></div>
+        </div>
+        <div class="spec-row">
+          <span>Canvas</span><strong>24 × 24</strong>
+          <span>Stroke</span><strong>2 / round</strong>
+          <span>Color</span><strong>currentColor</strong>
+        </div>
+        <div class="copy-stack">
+          <button class="primary-button" id="copy-svg" type="button">Copy SVG</button>
+          <button class="secondary-button" id="copy-call" type="button">Copy JavaScript call</button>
+        </div>
+        <pre class="code-preview" id="code-preview" tabindex="0"></pre>
+      </aside>
+    </section>
+
+    <section class="policy-section" id="policy-lab" aria-labelledby="policy-title">
+      <div class="policy-intro">
+        <p class="section-kicker">Safety policy</p>
+        <h2 id="policy-title">Should this button become icon-only?</h2>
+        <p>Risk rules are evaluated before visual preference. Enter a real label to see the recommended presentation and whether the codemod may touch it.</p>
+        <div class="example-list" aria-label="Example button labels">
+          <button type="button" data-example="Send">Send</button>
+          <button type="button" data-example="Share">Share</button>
+          <button type="button" data-example="Send payment">Send payment</button>
+          <button type="button" data-example="Copy and delete">Copy and delete</button>
+          <button type="button" data-example="Confirm send">Confirm send</button>
+        </div>
+      </div>
+      <div class="policy-card">
+        <label for="policy-input">Button label</label>
+        <div class="policy-input-row">
+          <input id="policy-input" value="Send payment" autocomplete="off">
+          <button class="primary-button" id="evaluate-policy" type="button">Evaluate</button>
+        </div>
+        <div class="policy-result" id="policy-result" aria-live="polite">
+          <div class="mode-line">
+            <span class="mode-dot" aria-hidden="true"></span>
+            <strong id="policy-mode">text-required</strong>
+          </div>
+          <p id="policy-reason"></p>
+          <dl>
+            <div><dt>Suggested icon</dt><dd id="policy-icon">cart</dd></div>
+            <div><dt>Automatic migration</dt><dd id="policy-auto">Blocked</dd></div>
+            <div><dt>Matched rules</dt><dd id="policy-rules">commerce, send</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="principles" aria-labelledby="principles-title">
+      <p class="section-kicker">Acceptance rules</p>
+      <h2 id="principles-title">Icons that stay understandable</h2>
+      <div class="principle-grid">
+        <article><span>01</span><h3>Exact geometry</h3><p>A single 24px grid, 2-unit stroke, and optical safe zone prevent visual drift.</p></article>
+        <article><span>02</span><h3>Accessible states</h3><p>Names, tooltips, focus rings, and 44px targets are part of the component—not optional polish.</p></article>
+        <article><span>03</span><h3>Risk before style</h3><p>Money, identity, authorization, deletion, and commit actions always retain visible text.</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>BB Rab Unified Icons · MIT licensed</p>
+    <a href="https://github.com/enjoytime1101-spec/bbrab-unified-icons/issues">Report an issue</a>
+  </footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./playground.js"></script>
+</body>
+</html>
