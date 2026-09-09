@@ -1,14 +1,18 @@
 # Button Policy
 
-## Pure icon allowed
+## Risk-first rule
 
-Send, close, back, refresh, search, clear input, copy, expand/collapse, contextual more menu, media play/pause, undo, and redo may use icon-only treatment when the surrounding interface makes the action obvious.
+Classify the complete label before choosing presentation. Money, identity, authorization, destructive, and important commit words override lower-risk words in the same label. “Send payment”, “Copy and delete”, and “Confirm send” therefore retain visible text.
 
-Requirements: `aria-label`, tooltip, keyboard focus, at least 44×44 CSS px hit target on touch surfaces, visible hover/active/disabled states, and immediate outcome feedback.
+## Icon-only allowed
+
+Send, close, back, refresh, search, clear current input, copy, expand/collapse, contextual more menu, media play/pause, and undo may use icon-only treatment only when the label exactly matches one approved action and the surrounding interface makes it obvious.
+
+Requirements: `aria-label`, tooltip, keyboard focus, at least a 44 × 44 CSS pixel hit target on touch surfaces, visible hover/active/disabled states, and immediate outcome feedback.
 
 ## Icon plus visible text
 
-Bookmark, like, comment, share, upload, download/export, edit, new/add, and stop should normally retain visible text. Text can be reduced only in a mature, narrow toolbar where every action has an accessible name and tooltip.
+Bookmark, like, comment, share, upload, download/export, edit, add/new, and stop should normally retain visible text. Text can be reduced only in a mature, narrow toolbar where the object is explicit and every action remains accessible.
 
 ## Visible text required
 
@@ -16,4 +20,4 @@ Purchase, payment, recharge, withdrawal, refund, login, registration, identity b
 
 ## Automation
 
-Audit every button. Auto-migrate only exact, unambiguous `icon-only-safe` labels. Leave all other changes as suggestions. Always preview before writing and keep a backup.
+Audit every button. Auto-migrate only a single, exact, unambiguous `icon-only-safe` action. Multiple action matches return `review` unless a protected rule applies. Always preview before writing and keep a backup.
