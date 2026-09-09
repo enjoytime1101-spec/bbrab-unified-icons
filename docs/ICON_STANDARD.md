@@ -1,44 +1,92 @@
-# 统一 SVG 图标与按钮规范
+# Unified SVG Icon and Button Standard
 
-## 目标
+## Purpose
 
-统一不是“把所有文字变成图标”，而是让同一动作在全平台具有相同图形、尺寸、状态和行为。图标负责快速识别，文字负责消除风险与歧义。
+Consistency means that one action has the same geometry, size, state, and behavior across a product. It does not mean replacing every label with an icon. Icons accelerate recognition; visible text removes ambiguity and protects consequential actions.
 
-## 三种呈现模式
+## Drawing grid
 
-| 模式 | 适用动作 | 必要条件 |
-|---|---|---|
-| `icon-only-safe` | 发送、关闭、返回、刷新、搜索、复制、播放器控制、撤销/重做 | 上下文清晰；必须有 `aria-label` 和 tooltip；点击区至少 44×44 CSS px |
-| `icon-text` | 收藏、点赞、评论、分享、上传、下载、编辑、新建 | 图标在左、文字在右；状态变化清晰；首次使用不隐藏文字 |
-| `text-required` | 购买、支付、充值、提现、退款、登录、注册、授权、删除、确认提交 | 可见文字不可移除；图标只能辅助；涉及金额时显示金额与对象 |
+| Property | Contract |
+| --- | --- |
+| Coordinate system | `viewBox="0 0 24 24"` |
+| Primary keyline | `2…22`, a 20-unit square |
+| Optical safe zone | Keep essential detail within `3…21` |
+| Optical correction | Curves may overshoot by no more than `0.5` units |
+| Default stroke | `2` units |
+| Caps and joins | `round` |
+| Default output | `20px`; accepted API range `8…128px` |
+| Touch target | At least `44 × 44` CSS pixels |
 
-## SVG 契约
+Use the optical centre, not only mathematical bounds. A circular shape may extend slightly farther than a square so both appear equal in weight. Avoid detail that collapses at 16px.
 
-- `viewBox="0 0 24 24"`，默认视觉尺寸 20px，触控按钮外框至少 44px。
-- 线性图标使用 `fill="none"`、`stroke="currentColor"`、`stroke-width="2"`。
-- 产品 UI 不使用 Emoji 代替图标，不混用不同线宽与视角的图标集。
-- 装饰性 SVG 使用 `aria-hidden="true" focusable="false"`；独立表达意义时提供可访问名称。
-- 不允许脚本、事件属性、外部资源、`javascript:` URL 或动态未转义 SVG 字符串。
+## SVG contract
 
-## 状态契约
+- Use `fill="none"`, `stroke="currentColor"`, `stroke-linecap="round"`, and `stroke-linejoin="round"` on the rendered root.
+- Catalog fragments may contain simple SVG geometry only.
+- Do not include scripts, event attributes, remote resources, embedded raster data, inline brand colors, or `javascript:` URLs.
+- Decorative SVGs use `aria-hidden="true" focusable="false"`.
+- A semantic standalone SVG uses `role="img"` and an escaped `aria-label`.
+- Do not use emoji as production UI icons or mix unrelated icon families.
 
-- `hover`：背景或边框发生可见变化，不只依赖颜色深浅微调。
-- `focus-visible`：至少 2px 焦点环，不能被 `outline: none` 吞掉。
-- `active`：轻微缩放或颜色反馈，不改变布局。
-- `disabled`：视觉与语义同时禁用，解释不可用原因。
-- `loading`：保留按钮宽度并标注进行中，不让用户重复提交。
-- `selected`：收藏、点赞、静音等开关需同步 `aria-pressed`。
+## Button presentation modes
 
-## 自动化边界
+| Mode | Use | Requirements |
+| --- | --- | --- |
+| `icon-only-safe` | Familiar, low-risk, contextually explicit actions | Exact approved action; accessible name; tooltip; 44px target; focus and outcome feedback |
+| `icon-text` | Recognisable actions whose object, format, or state still matters | Icon before visible text; expose toggle state where relevant |
+| `text-required` | Money, identity, authorization, destructive, or commit actions | Visible action text; object and amount for money; confirmation proportional to risk |
+| `review` | Unknown, compound, or ambiguous controls | Keep visible text and request product review |
 
-CLI 可自动审计所有按钮，但 codemod 只自动处理文本完全匹配、语义稳定的 `icon-only-safe` 按钮。默认 dry-run；写入必须同时使用 `--write --confirm`，并生成 `.bbrab-icons.bak` 备份。解析器是轻量级 HTML/JSX 扫描器，复杂组件应使用审计报告人工迁移。
+Risk is evaluated before presentation. “Send payment”, “Copy and delete”, and “Confirm send” therefore remain text-required. “Copy and send” contains two low-risk actions and remains a review item until it is split or explicitly designed.
 
-## 产品验证清单
+## Color tokens
 
-1. 图标是否能在脱离颜色后识别。
-2. 同一动作是否跨页面保持同一图标。
-3. 移动端是否可触达且不误触。
-4. 键盘是否能聚焦和激活。
-5. 屏幕阅读器是否能读出按钮目的。
-6. 操作是否产生真实数据变化或明确错误反馈。
-7. 资金、身份、授权、删除动作是否保留可见文字与必要确认。
+```css
+:root {
+  --icon-default: #334155;
+  --icon-muted: #64748b;
+  --icon-accent: #2563eb;
+  --icon-success: #16a34a;
+  --icon-warning: #d97706;
+  --icon-danger: #dc2626;
+  --icon-on-solid: #ffffff;
+}
+
+[data-theme="dark"] {
+  --icon-default: #e2e8f0;
+  --icon-muted: #94a3b8;
+  --icon-accent: #60a5fa;
+  --icon-success: #4ade80;
+  --icon-warning: #fbbf24;
+  --icon-danger: #f87171;
+}
+```
+
+Icons inherit `currentColor`. Use default for ordinary controls, muted for passive metadata, accent for current selection, and semantic colors only for matching status or risk. Pair semantic color with text or another visible state cue.
+
+## Light and dark themes
+
+The geometry does not change between themes. Change tokens and surface contrast only. On a filled accent or danger button, use `--icon-on-solid`; on a neutral surface, meet WCAG contrast for the complete control. Avoid faint icon strokes that disappear against dark cards.
+
+## Interaction states
+
+- `hover`: change surface or border clearly; do not rely on a one-step color shift.
+- `focus-visible`: show a focus ring of at least 2px with an offset.
+- `active`: use a subtle scale or color response without moving surrounding layout.
+- `disabled`: disable semantics and interaction, reduce emphasis, and explain the reason when it is not obvious.
+- `loading`: preserve button width, announce progress, and prevent duplicate submission.
+- `selected`: synchronize toggles with `aria-pressed` and disclosure controls with `aria-expanded`.
+
+## Automation boundary
+
+The CLI audits all discovered buttons. The codemod changes only an exact label that matches one approved `icon-only-safe` rule. It is dry-run by default; `--write --confirm` is required for mutation, and a `.bbrab-icons.bak` backup is created. The scanner is intentionally lightweight, so component factories and computed labels remain manual review items.
+
+## Product verification checklist
+
+1. Is the icon recognizable without relying on color?
+2. Does the same action use the same icon throughout the product?
+3. Is the control reachable and operable on mobile and by keyboard?
+4. Can a screen reader announce its purpose and state?
+5. Does the action provide visible success or error feedback?
+6. Do consequential controls retain visible text and necessary confirmation?
+7. Was the underlying business workflow tested separately from visual conformance?
