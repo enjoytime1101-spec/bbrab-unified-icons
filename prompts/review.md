@@ -1,3 +1,3 @@
-# Prompt Block：PR 图标回归检查
+# Prompt Block: Pull-Request Icon Regression Review
 
-审查本次 UI 变更是否：使用统一 24×24 SVG、继承 `currentColor`、避免 Emoji 充当产品图标、具备 hover/focus/disabled/active 状态、纯图标按钮具有可访问名称、关键动作仍有可见文字、移动端点击区域不小于 44×44 CSS px。输出阻断项、建议项和已通过项，不擅自扩大修改范围。
+Review whether the UI change uses the unified 24 × 24 SVG grid, inherits `currentColor`, avoids emoji as product icons, implements hover/focus/active/disabled/selected states, gives icon-only buttons accessible names and tooltips, keeps consequential actions visibly labelled, and provides at least 44 × 44 CSS pixel touch targets. Report blocking findings, recommendations, and verified items. Do not expand the change beyond the requested project.
