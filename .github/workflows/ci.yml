@@ -1,0 +1,27 @@
+name: verify-icon-system
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm install --ignore-scripts
+      - run: npm run check
+      - run: npm test
+      - run: mkdir -p reports && npm run audit:example > reports/example-audit.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: icon-audit-report
+          path: reports/example-audit.md
