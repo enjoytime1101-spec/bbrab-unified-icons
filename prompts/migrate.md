@@ -1,5 +1,5 @@
-# Prompt Block：安全迁移
+# Prompt Block: Conservative Icon Migration
 
-基于审计报告生成最小变更方案。默认只输出迁移预览，不写文件。
+Use the audit report to prepare the smallest coherent migration. Produce a dry-run preview first and do not write files by default.
 
-只有用户明确确认后，才允许执行带 `--write --confirm` 的迁移。写入前必须备份；写入后运行 `check`、测试与界面回归。不得自动把资金、身份、授权、破坏性或关键提交动作改成纯图标。对无法确定语义的按钮保留文字并列入人工复核。
+Only run migration with both `--write --confirm` after explicit approval. Create and report a recoverable backup, then run catalog checks, tests, and browser regression checks. Never convert money, identity, authorization, destructive, commit, compound, or unknown actions to icon-only controls. Keep uncertain labels visible and list them for manual review.
