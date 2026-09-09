@@ -1,6 +1,6 @@
 {
   "name": "bbrab-unified-icons",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A policy-aware SVG icon system, UI audit CLI, safe codemod, and agent toolkit.",
   "type": "module",
   "license": "MIT",
@@ -22,17 +22,25 @@
     "agent",
     "bin",
     "docs",
+    "examples",
     "prompts",
+    "scripts",
     "skill",
     "src",
+    "CONTRIBUTING.md",
+    "index.html",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
     "audit:example": "node ./bin/bbrab-icons.js audit ./examples --format markdown",
     "check": "node ./bin/bbrab-icons.js check",
+    "playground": "node ./scripts/serve-playground.mjs",
     "test": "node --test",
     "verify": "npm run check && npm test && npm run audit:example"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0"
   },
   "keywords": [
     "svg",
