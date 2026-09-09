@@ -8,7 +8,7 @@ function escapeExpression(value) {
 
 export async function planMigration(file) {
   const source = await readFile(file, "utf8");
-  const findings = auditSource(source, file).filter((item) => item.mode === "icon-only-safe" && item.icon && item.label !== "(未命名)" && !item.hasSvg);
+  const findings = auditSource(source, file).filter((item) => item.autoMigrate && item.mode === "icon-only-safe" && item.icon && item.label !== "(unnamed)" && !item.hasSvg);
   let output = source;
   const changes = [];
   for (const finding of findings) {
@@ -27,7 +27,7 @@ export async function planMigration(file) {
 }
 
 export async function applyMigration(file, options = {}) {
-  if (!options.write || !options.confirm) throw new Error("写入需要同时提供 --write 和 --confirm；默认仅生成安全预览。");
+  if (!options.write || !options.confirm) throw new Error("Writing requires both --write and --confirm; the default mode is a safe preview.");
   const plan = await planMigration(file);
   if (!plan.changed) return plan;
   const backup = `${file}.bbrab-icons.bak`;
