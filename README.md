@@ -6,19 +6,22 @@
 
 ## 开箱即用
 
-要求 Node.js 20 或更高版本，无运行时依赖。
+要求 Node.js 20 或更高版本，无运行时依赖。当前版本已在 GitHub 开源；克隆后即可运行：
 
 ```bash
-npx bbrab-unified-icons audit ./src --format markdown
-npx bbrab-unified-icons suggest "发送消息"
-npx bbrab-unified-icons render send --size 20
-npx bbrab-unified-icons migrate ./src/page.html
+git clone https://github.com/enjoytime1101-spec/bbrab-unified-icons.git
+cd bbrab-unified-icons
+npm install
+npm exec -- bbrab-icons audit ./src --format markdown
+npm exec -- bbrab-icons suggest "发送消息"
+npm exec -- bbrab-icons render send --size 20
+npm exec -- bbrab-icons migrate ./src/page.html
 ```
 
 迁移默认仅预览。确认报告后才写入：
 
 ```bash
-npx bbrab-unified-icons migrate ./src/page.html --write --confirm
+npm exec -- bbrab-icons migrate ./src/page.html --write --confirm
 ```
 
 写入时会创建 `page.html.bbrab-icons.bak`。购买、付款、充值、提现、退款、登录、注册、授权、删除和关键提交不会被自动改成纯图标。
@@ -38,7 +41,7 @@ const report = await auditPath("./src");
 以 stdio 启动只读 MCP 服务：
 
 ```bash
-npx bbrab-icons-mcp
+npm exec -- bbrab-icons-mcp
 ```
 
 提供四个工具：
