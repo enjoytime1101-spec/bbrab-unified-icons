@@ -1,85 +1,169 @@
 # BB Rab Unified Icons
 
-统一 SVG 图标体系的开源工程方案：图标资产、按钮决策策略、可访问性检查、代码审计、安全迁移、CI、Codex Skill、Prompt Blocks 与 MCP Agent 工具一次提供。
+[![CI](https://github.com/enjoytime1101-spec/bbrab-unified-icons/actions/workflows/ci.yml/badge.svg)](https://github.com/enjoytime1101-spec/bbrab-unified-icons/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-2563eb.svg)](LICENSE)
 
-它解决的不是“换一批 SVG”，而是“什么动作该用纯图标、什么动作必须保留文字、如何在大型项目中自动检查并安全迁移”。
+A policy-aware SVG icon system for product interfaces. The repository combines a consistent icon catalog with an accessibility contract, a read-only UI audit, a conservative codemod, an MCP server, a Codex Skill, reusable Prompt Blocks, automated tests, and a live browser playground.
 
-## 开箱即用
+**[Open the live Playground](https://enjoytime1101-spec.github.io/bbrab-unified-icons/)**
 
-要求 Node.js 20 或更高版本，无运行时依赖。当前版本已在 GitHub 开源；克隆后即可运行：
+## Why this is an engineering system
+
+Replacing labels with icons is not automatically an improvement. A send control in a composer can be safely icon-only; a payment, login, authorization, refund, delete, or final submit control cannot. This project evaluates the action first, then applies one of four modes:
+
+| Mode | Meaning | Typical examples |
+| --- | --- | --- |
+| `icon-only-safe` | A familiar low-risk action may use an icon when context is explicit. | Send, close, back, refresh, search, copy, play/pause |
+| `icon-text` | The icon supports recognition, while visible text removes ambiguity. | Share, bookmark, upload, export, edit, stop |
+| `text-required` | Visible text is mandatory. The icon is secondary. | Payment, recharge, refund, login, authorization, delete, publish |
+| `review` | The control is unknown, compound, or ambiguous. | “Copy and send”, product-specific actions |
+
+Risk rules always win. Labels such as “Send payment”, “Copy and delete”, and “Confirm send” cannot be auto-migrated.
+
+## Icon drawing contract
+
+All bundled icons follow one geometry system:
+
+- Canvas: `24 × 24` viewBox.
+- Primary keyline: coordinates `2…22`, producing a `20 × 20` safe drawing area.
+- Optical safe zone: keep essential detail within `3…21`; curves may overshoot a keyline by at most `0.5` when visual centring requires it.
+- Stroke: `2`, with round caps and round joins.
+- Default rendered size: `20px`; accepted programmatic range: `8…128px`.
+- Fill: `none`; color: `currentColor`.
+- Touch target: at least `44 × 44` CSS pixels, independent of the SVG size.
+- No scripts, event attributes, remote resources, embedded raster data, or `javascript:` URLs.
+
+See [the complete icon standard](docs/ICON_STANDARD.md) for optical sizing, state, theme, and accessibility rules.
+
+## Color tokens and themes
+
+Icons inherit text color instead of embedding brand colors. Recommended tokens:
+
+```css
+:root {
+  --icon-default: #334155;
+  --icon-muted: #64748b;
+  --icon-accent: #2563eb;
+  --icon-success: #16a34a;
+  --icon-warning: #d97706;
+  --icon-danger: #dc2626;
+  --icon-on-solid: #ffffff;
+}
+
+[data-theme="dark"] {
+  --icon-default: #e2e8f0;
+  --icon-muted: #94a3b8;
+  --icon-accent: #60a5fa;
+  --icon-success: #4ade80;
+  --icon-warning: #fbbf24;
+  --icon-danger: #f87171;
+}
+```
+
+Use accent for selection and primary actions, muted for passive metadata, semantic colors only for matching states, and `--icon-on-solid` on filled controls. Never encode success or failure by color alone.
+
+## Install and verify
+
+The package is currently distributed from GitHub and is not claimed as an npm registry release.
 
 ```bash
 git clone https://github.com/enjoytime1101-spec/bbrab-unified-icons.git
 cd bbrab-unified-icons
 npm install
-npm exec -- bbrab-icons audit ./src --format markdown
-npm exec -- bbrab-icons suggest "发送消息"
-npm exec -- bbrab-icons render send --size 20
-npm exec -- bbrab-icons migrate ./src/page.html
+npm run verify
 ```
 
-迁移默认仅预览。确认报告后才写入：
+Node.js 20 or newer is required. Runtime code has no external dependency; the official MCP SDK is a development-only interoperability test dependency.
+
+## CLI
+
+Audit the included fixture or your own UI source:
 
 ```bash
-npm exec -- bbrab-icons migrate ./src/page.html --write --confirm
+npm exec -- bbrab-icons audit ./examples/browser.html --format markdown
+npm exec -- bbrab-icons suggest "Send payment"
+npm exec -- bbrab-icons render send --size 24 --label "Send message"
+npm exec -- bbrab-icons check
 ```
 
-写入时会创建 `page.html.bbrab-icons.bak`。购买、付款、充值、提现、退款、登录、注册、授权、删除和关键提交不会被自动改成纯图标。
+Migration is preview-only by default:
+
+```bash
+cp ./examples/browser.html /tmp/bbrab-icons-example.html
+npm exec -- bbrab-icons migrate /tmp/bbrab-icons-example.html
+```
+
+Writing requires both explicit flags and creates a `.bbrab-icons.bak` backup:
+
+```bash
+npm exec -- bbrab-icons migrate /tmp/bbrab-icons-example.html --write --confirm
+```
+
+The lightweight scanner intentionally does not pretend to be a complete JSX parser. Complex component factories remain review items.
 
 ## JavaScript API
 
 ```js
-import { renderIcon, suggestButton, auditPath } from "bbrab-unified-icons";
+import { auditPath, renderIcon, suggestButton } from "bbrab-unified-icons";
 
-const svg = renderIcon("send", { size: 20 });
-const decision = suggestButton("购买套餐");
+const svg = renderIcon("send", { size: 20, label: "Send message" });
+const decision = suggestButton("Confirm and send");
 const report = await auditPath("./src");
 ```
 
-## Agent / MCP
+`decision.autoMigrate` is `true` only for an exact, single, low-risk action.
 
-以 stdio 启动只读 MCP 服务：
+## MCP server
 
-```bash
-npm exec -- bbrab-icons-mcp
+The read-only MCP server uses the standard newline-delimited JSON-RPC stdio transport. It exposes `audit_ui`, `suggest_button`, `render_icon`, and `read_policy`; file mutation is deliberately unavailable.
+
+Generic stdio host configuration:
+
+```json
+{
+  "mcpServers": {
+    "bbrab-unified-icons": {
+      "command": "node",
+      "args": ["/absolute/path/to/bbrab-unified-icons/agent/mcp-server.mjs"]
+    }
+  }
+}
 ```
 
-提供四个工具：
+The test suite connects through the official `@modelcontextprotocol/sdk` client and exercises the handshake, tool discovery, and tool calls.
 
-- `audit_ui`：扫描文件或目录，输出按钮分级与问题。
-- `suggest_button`：根据动作语义推荐图标与呈现模式。
-- `render_icon`：输出经过约束的内联 SVG。
-- `read_policy`：读取完整规范。
+## Skill, Prompt Blocks, and Agent tools
 
-通用函数工具 schema 位于 `agent/tool-schema.json`；适用于不支持 MCP、但支持 function calling 的 Agent。
+- Codex Skill: [`skill/bbrab-icon-workflow/`](skill/bbrab-icon-workflow/)
+- Audit Prompt Block: [`prompts/audit.md`](prompts/audit.md)
+- Migration Prompt Block: [`prompts/migrate.md`](prompts/migrate.md)
+- Pull-request review Prompt Block: [`prompts/review.md`](prompts/review.md)
+- Function-tool schema: [`agent/tool-schema.json`](agent/tool-schema.json)
 
-## Codex Skill 与 Prompt Blocks
-
-- Skill：`skill/bbrab-icon-workflow/`
-- 审计 Prompt：`prompts/audit.md`
-- 安全迁移 Prompt：`prompts/migrate.md`
-- PR 检查 Prompt：`prompts/review.md`
-
-复制 Skill 文件夹到个人或项目 Skills 目录后，在请求中使用 `$bbrab-icon-workflow`。Skill 会引导 Agent 先审计、再生成预览、经明确确认后迁移，并验证可访问性与关键业务边界。
-
-## 工程验证
+Install the Skill into a project without changing global configuration:
 
 ```bash
-npm run verify
+mkdir -p .codex/skills
+cp -R ./skill/bbrab-icon-workflow .codex/skills/
 ```
 
-GitHub Actions 会运行结构检查、单元测试和示例审计，并上传 Markdown 审计报告。
+Then invoke `$bbrab-icon-workflow` in a compatible agent host.
 
-## 设计原则
+## Development
 
-- 高频、低风险、上下文明确的动作可以使用纯图标。
-- 资金、身份、授权、删除和关键提交必须保留可见文字。
-- 图标可访问、可测试、可自动审计。
-- 自动改造必须可预览、可确认、可恢复。
-- UI 显示成功不能代替真实业务成功；审计只证明界面符合规范。
+```bash
+npm test
+npm run check
+npm run audit:example
+npm run playground
+```
 
-完整规范见 [`docs/ICON_STANDARD.md`](docs/ICON_STANDARD.md)。
+Open `http://127.0.0.1:4173/` after starting the playground. Contributions must follow [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## 许可证
+## Verification boundary
 
-MIT
+Passing the icon audit proves only that controls follow this repository's visual and accessibility policy. It does not prove that a payment, login, refund, publish action, or other business workflow succeeds. Those flows require their own API, data, and end-to-end tests.
+
+## License
+
+[MIT](LICENSE)
