@@ -160,6 +160,8 @@ npm run playground
 
 Open `http://127.0.0.1:4173/` after starting the playground. Contributions must follow [CONTRIBUTING.md](CONTRIBUTING.md).
 
+The Pages workflow publishes this repository only to its default `github.io` project URL; it does not change or attach any existing product domain.
+
 ## Verification boundary
 
 Passing the icon audit proves only that controls follow this repository's visual and accessibility policy. It does not prove that a payment, login, refund, publish action, or other business workflow succeeds. Those flows require their own API, data, and end-to-end tests.
