@@ -1,0 +1,39 @@
+[
+  {
+    "type": "function",
+    "name": "suggest_button",
+    "description": "Recommend an accessible icon treatment for a UI button label.",
+    "parameters": {
+      "type": "object",
+      "properties": { "label": { "type": "string" } },
+      "required": ["label"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "render_icon",
+    "description": "Render a safe inline SVG from the unified catalog.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "size": { "type": "number", "minimum": 8, "maximum": 128 },
+        "label": { "type": "string" }
+      },
+      "required": ["name"],
+      "additionalProperties": false
+    }
+  },
+  {
+    "type": "function",
+    "name": "audit_ui",
+    "description": "Read-only scan of buttons in local UI files.",
+    "parameters": {
+      "type": "object",
+      "properties": { "path": { "type": "string" } },
+      "required": ["path"],
+      "additionalProperties": false
+    }
+  }
+]
