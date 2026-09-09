@@ -16,19 +16,19 @@ async function main() {
   }
   if (command === "suggest") {
     const label = args.filter((value) => !value.startsWith("--")).join(" ");
-    if (!label) throw new Error("用法：bbrab-icons suggest <按钮文字>");
+    if (!label) throw new Error("Usage: bbrab-icons suggest <button label>");
     console.log(JSON.stringify(suggestButton(label), null, 2));
     return;
   }
   if (command === "render") {
     const name = args.find((value) => !value.startsWith("--"));
-    if (!name) throw new Error(`用法：bbrab-icons render <图标名>\n可用：${iconNames.join(", ")}`);
+    if (!name) throw new Error(`Usage: bbrab-icons render <icon name>\nAvailable: ${iconNames.join(", ")}`);
     console.log(renderIcon(name, { size: Number(valueAfter("--size", 20)), label: valueAfter("--label", "") }));
     return;
   }
   if (command === "migrate") {
     const file = args.find((value) => !value.startsWith("--"));
-    if (!file) throw new Error("用法：bbrab-icons migrate <文件> [--write --confirm]");
+    if (!file) throw new Error("Usage: bbrab-icons migrate <file> [--write --confirm]");
     const write = args.includes("--write");
     const plan = write ? await applyMigration(file, { write, confirm: args.includes("--confirm") }) : await planMigration(file);
     console.log(JSON.stringify({ file: plan.file, changed: plan.changed, changes: plan.changes, backup: plan.backup || null, mode: write ? "written" : "preview" }, null, 2));
@@ -44,6 +44,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error(`错误：${error.message}`);
+  console.error(`Error: ${error.message}`);
   process.exitCode = 1;
 });
